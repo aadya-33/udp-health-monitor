@@ -3,6 +3,16 @@ import time
 from packet import decode_packet
 from config import BIND_IP, PORT, HEARTBEAT_TIMEOUT, CPU_LIMIT, MEM_LIMIT
 
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        return s.getsockname()[0]
+    except OSError:
+        return "127.0.0.1"
+    finally:
+        s.close()
+
 HOST = BIND_IP
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -10,6 +20,9 @@ sock.bind((HOST, PORT))
 sock.settimeout(1)             
 
 nodes = {}                     
+print(f"Monitoring server listening on port {PORT}")
+print(f"Agents on other laptops should use server IP: {get_local_ip()}")
+
 print(f"Monitoring server listening on port {PORT}...")
 
 try:
