@@ -9,6 +9,21 @@ SERVER = (SERVER_IP, PORT)
 
 node_id = sys.argv[1] if len(sys.argv) > 1 else "node-1"
 
+# Server IP: from command line, otherwise ask the user
+if len(sys.argv) > 2:
+    server_ip = sys.argv[2]
+else:
+    server_ip = input(f"Enter server IP address [{SERVER_IP}]: ").strip() or SERVER_IP
+
+try:
+    socket.inet_aton(server_ip)   # checks it looks like a valid IPv4 address
+except OSError:
+    print(f"'{server_ip}' is not a valid IP address.")
+    sys.exit(1)
+ 
+SERVER = (server_ip, PORT)
+print(f"[{node_id}] sending to {server_ip}:{PORT}")
+
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 seq = 0
