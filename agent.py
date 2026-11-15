@@ -51,6 +51,8 @@ while True:
 
     critical = cpu > CPU_LIMIT or mem > MEM_LIMIT
     seq += 1
+    # 0xB8 = DSCP 46 (Expedited Forwarding) for CRITICAL alerts; 0x00 = CS0 for normal
+    sock.setsockopt(socket.IPPROTO_IP, socket.IP_TOS, 0xB8 if critical else 0x00)
 
     data = encode_packet(
         node_id=node_id,
