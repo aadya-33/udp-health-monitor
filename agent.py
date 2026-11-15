@@ -3,7 +3,7 @@ import time
 import sys
 import psutil
 from packet import encode_packet
-from config import SERVER_IP, PORT, SEND_INTERVAL, CPU_LIMIT
+from config import SERVER_IP, PORT, SEND_INTERVAL, CPU_LIMIT, MEM_LIMIT
 
 SERVER = (SERVER_IP, PORT)
 
@@ -49,7 +49,7 @@ while True:
     net = round(moved / (now - last_t) / 1e6, 2)  # MB/s
     last_net, last_t = net_now, now
 
-    critical = cpu > CPU_LIMIT
+    critical = cpu > CPU_LIMIT or mem > MEM_LIMIT
     seq += 1
 
     data = encode_packet(
