@@ -107,3 +107,6 @@ Each agent needs its own node ID. Use the Python that has `psutil` installed.
 - **Node failure:** stop an agent and confirm the server marks it DOWN after 6 seconds, then UP when restarted.
 - **Link failure:** `link s1 s2 down` and check that traffic still reaches the server through the other path.
 - **Packet loss / congestion:** add loss on a link or flood it with `iperf`, and compare the loss reported by the server (sequence gaps).
+- **Traffic Prioritization (`sdn/controller.py` & `sdn/topology.py`):** Links are capped at `10 Mbps` with OVS HTB QoS queues:
+  - **Queue 1 (8 Mbps guaranteed, `priority=100`):** Express queue for critical alerts matching `udp_dst=9000` and `ip_dscp=46`.
+  - **Queue 0 (2 Mbps max, `priority=50` / default):** Standard queue for routine health telemetry and background traffic.
