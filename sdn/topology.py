@@ -11,6 +11,7 @@ def configure_qos(net):
         for intf in sw.intfList():
             if intf.name == 'lo':
                 continue
+            sw.cmd(f'ovs-vsctl clear Port {intf.name} qos')
             sw.cmd(
                 f'ovs-vsctl -- set Port {intf.name} qos=@newqos '
                 f'-- --id=@newqos create QoS type=linux-htb other-config:max-rate=10000000 queues=0=@q0,1=@q1 '
