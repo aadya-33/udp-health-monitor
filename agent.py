@@ -2,12 +2,9 @@ import socket
 import time
 import sys
 import psutil
+import random
 from packet import encode_packet
 from config import SERVER_IP, PORT, SEND_INTERVAL, CPU_LIMIT, MEM_LIMIT
-
-SERVER = (SERVER_IP, PORT)
-
-node_id = sys.argv[1] if len(sys.argv) > 1 else "node-1"
 
 # Server IP: from command line, otherwise ask the user
 if len(sys.argv) > 1:
@@ -19,6 +16,8 @@ if len(sys.argv) > 2:
     node_id = sys.argv[2]
 else:
     node_id = input("Enter node ID: ").strip() or socket.gethostname()
+
+stress_mode = (len(sys.argv) > 3 and sys.argv[3].lower() == "stress")
 
 try:
     socket.inet_aton(server_ip)   # checks it looks like a valid IPv4 address
@@ -39,8 +38,14 @@ last_t = time.time()
 
 while True:
     time.sleep(SEND_INTERVAL)
-    cpu = psutil.cpu_percent(interval=None)    
-    mem = psutil.virtual_memory().percent
+
+    if stress_mode:
+        # ~85% chance of breaching thresholds (90% CPU / 85% MEM), ~15% brief dip
+        cpu = round(random.uniform(88.0, 99.5), 1)
+        mem = round(random.uniform(83.0, 96.0), 1)
+    else:
+        cpu = psutil.cpu_percent(interval=None)    
+        mem = psutil.virtual_memory().percent
     procs = len(psutil.pids())
 
     now = time.time()
